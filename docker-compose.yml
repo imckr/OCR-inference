@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  dotsocr:
+    build: .
+    ports:
+      - "${PORT:-8009}:8009"
+    volumes:
+      - ./models:/app/models    # Model weights
+      - ./logs:/app/logs        # Application logs
+      - dotsocr-data:/app/data  # SQLite database
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - HF_HUB_ENABLE_HF_TRANSFER=1
+      - PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK=True
+    restart: unless-stopped
+    # GPU support — requires NVIDIA Container Toolkit
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+volumes:
+  dotsocr-data:

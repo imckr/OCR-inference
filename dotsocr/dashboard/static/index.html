@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OCR Inference Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   DESIGN TOKENS — Enterprise cloud console palette
+   ═══════════════════════════════════════════════════════════════════ */
+:root {
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --ease: cubic-bezier(.4,0,.2,1);
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --header-h: 52px;
+  --sidebar-w: 240px;
+}
+
+[data-theme="dark"] {
+  --bg-body: #09090b;
+  --bg-surface: #0c0c0e;
+  --bg-elevated: #131316;
+  --bg-card: #18181b;
+  --bg-hover: #1f1f23;
+  --bg-active: #27272a;
+  --bg-input: #18181b;
+  --bg-code: #111113;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --text-dim: #52525b;
+  --border-primary: #27272a;
+  --border-subtle: #1f1f23;
+  --border-focus: #3b82f6;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-text: #60a5fa;
+  --accent-muted: rgba(59,130,246,.1);
+  --accent-border: rgba(59,130,246,.25);
+  --green: #22c55e;
+  --green-text: #4ade80;
+  --green-muted: rgba(34,197,94,.1);
+  --green-border: rgba(34,197,94,.25);
+  --red: #ef4444;
+  --red-text: #f87171;
+  --red-muted: rgba(239,68,68,.1);
+  --red-border: rgba(239,68,68,.25);
+  --amber: #f59e0b;
+  --amber-text: #fbbf24;
+  --amber-muted: rgba(245,158,11,.1);
+  --amber-border: rgba(245,158,11,.25);
+  --purple: #a855f7;
+  --purple-text: #c084fc;
+  --purple-muted: rgba(168,85,247,.1);
+  --purple-border: rgba(168,85,247,.25);
+  --teal: #14b8a6;
+  --teal-text: #2dd4bf;
+  --teal-muted: rgba(20,184,166,.1);
+  --teal-border: rgba(20,184,166,.25);
+  --cyan: #06b6d4;
+  --cyan-text: #22d3ee;
+  --cyan-muted: rgba(6,182,212,.1);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.5);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,.6);
+  --ch-line: #3b82f6; --ch-fill: rgba(59,130,246,.06);
+  --ch-green: #22c55e; --ch-green-fill: rgba(34,197,94,.06);
+  --ch-amber: #f59e0b; --ch-amber-fill: rgba(245,158,11,.06);
+  --ch-purple: #a855f7; --ch-purple-fill: rgba(168,85,247,.06);
+  --ch-grid: rgba(39,39,42,.6); --ch-label: #52525b;
+}
+
+[data-theme="light"] {
+  --bg-body: #fafafa;
+  --bg-surface: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-card: #ffffff;
+  --bg-hover: #f4f4f5;
+  --bg-active: #e4e4e7;
+  --bg-input: #ffffff;
+  --bg-code: #f4f4f5;
+  --text-primary: #09090b;
+  --text-secondary: #52525b;
+  --text-muted: #71717a;
+  --text-dim: #a1a1aa;
+  --border-primary: #e4e4e7;
+  --border-subtle: #f4f4f5;
+  --border-focus: #3b82f6;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-text: #2563eb;
+  --accent-muted: rgba(37,99,235,.06);
+  --accent-border: rgba(37,99,235,.2);
+  --green: #16a34a;
+  --green-text: #16a34a;
+  --green-muted: rgba(22,163,74,.06);
+  --green-border: rgba(22,163,74,.2);
+  --red: #dc2626;
+  --red-text: #dc2626;
+  --red-muted: rgba(220,38,38,.06);
+  --red-border: rgba(220,38,38,.2);
+  --amber: #d97706;
+  --amber-text: #d97706;
+  --amber-muted: rgba(217,119,6,.06);
+  --amber-border: rgba(217,119,6,.2);
+  --purple: #7c3aed;
+  --purple-text: #7c3aed;
+  --purple-muted: rgba(124,58,237,.06);
+  --purple-border: rgba(124,58,237,.2);
+  --teal: #0d9488;
+  --teal-text: #0d9488;
+  --teal-muted: rgba(13,148,136,.06);
+  --teal-border: rgba(13,148,136,.2);
+  --cyan: #0891b2;
+  --cyan-text: #0891b2;
+  --cyan-muted: rgba(8,145,178,.06);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,.1);
+  --ch-line: #2563eb; --ch-fill: rgba(37,99,235,.04);
+  --ch-green: #16a34a; --ch-green-fill: rgba(22,163,74,.04);
+  --ch-amber: #d97706; --ch-amber-fill: rgba(217,119,6,.04);
+  --ch-purple: #7c3aed; --ch-purple-fill: rgba(124,58,237,.04);
+  --ch-grid: rgba(228,228,231,.7); --ch-label: #a1a1aa;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESET
+   ═══════════════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{font-family:var(--font);background:var(--bg-body);color:var(--text-primary);line-height:1.5;min-height:100vh;transition:background .2s var(--ease),color .2s var(--ease)}
+a{color:var(--accent-text);text-decoration:none}
+a:hover{text-decoration:underline}
+code,pre{font-family:var(--mono);font-size:12px}
+pre{background:var(--bg-code);border:1px solid var(--border-primary);border-radius:var(--radius);padding:16px;overflow-x:auto;line-height:1.65;color:var(--text-secondary)}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-primary);border-radius:3px}
+::selection{background:var(--accent-muted);color:var(--accent-text)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ═══════════════════════════════════════════════════════════════════
+   AUTH SCREEN
+   ═══════════════════════════════════════════════════════════════════ */
+.auth-screen{display:flex;min-height:100vh}
+.auth-left{flex:1;display:flex;align-items:center;justify-content:center;padding:40px;background:var(--bg-body)}
+.auth-right{width:480px;background:var(--bg-surface);border-left:1px solid var(--border-primary);display:flex;align-items:center;justify-content:center;padding:48px}
+@media(max-width:900px){.auth-right{width:100%}.auth-left{display:none}}
+.auth-hero{max-width:400px}
+.auth-hero h2{font-size:28px;font-weight:700;letter-spacing:-.02em;margin-bottom:8px;line-height:1.2}
+.auth-hero p{color:var(--text-muted);font-size:15px;line-height:1.6}
+.auth-hero .feature-list{margin-top:32px;display:flex;flex-direction:column;gap:16px}
+.auth-hero .feature{display:flex;gap:12px;align-items:flex-start}
+.auth-hero .feature .f-icon{width:36px;height:36px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.auth-hero .feature .f-icon svg{width:18px;height:18px;stroke-width:1.8;fill:none}
+.auth-hero .feature h4{font-size:13px;font-weight:600;margin-bottom:2px}
+.auth-hero .feature p{font-size:12px;color:var(--text-dim);line-height:1.4;margin:0}
+.auth-box{width:100%;max-width:360px}
+.auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:32px}
+.auth-logo .logo-mark{width:32px;height:32px;border-radius:var(--radius);background:var(--accent);display:flex;align-items:center;justify-content:center}
+.auth-logo .logo-mark svg{width:18px;height:18px;stroke:#fff;stroke-width:2;fill:none}
+.auth-logo span{font-size:16px;font-weight:700;letter-spacing:-.03em}
+.auth-title{font-size:20px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
+.auth-sub{font-size:13px;color:var(--text-muted);margin-bottom:24px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:6px}
+.form-input{width:100%;padding:8px 12px;font-family:var(--font);font-size:13px;border:1px solid var(--border-primary);border-radius:var(--radius-sm);background:var(--bg-input);color:var(--text-primary);outline:none;transition:border .15s,box-shadow .15s}
+.form-input:focus{border-color:var(--border-focus);box-shadow:0 0 0 3px var(--accent-muted)}
+.form-input::placeholder{color:var(--text-dim)}
+.auth-swap{text-align:center;margin-top:16px;font-size:13px;color:var(--text-muted)}
+.auth-swap a{cursor:pointer;font-weight:500;color:var(--accent-text)}
+
+/* ═══════════════════════════════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════════════════════════════ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;font-family:var(--font);font-size:13px;font-weight:500;border:1px solid transparent;border-radius:var(--radius-sm);cursor:pointer;transition:all .15s var(--ease);white-space:nowrap;outline:none;line-height:1}
+.btn:focus-visible{box-shadow:0 0 0 3px var(--accent-muted)}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.btn-secondary{background:var(--bg-card);color:var(--text-primary);border-color:var(--border-primary)}
+.btn-secondary:hover{background:var(--bg-hover);border-color:var(--text-dim)}
+.btn-danger{background:var(--red-muted);color:var(--red-text);border-color:var(--red-border)}
+.btn-danger:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-ghost{background:transparent;color:var(--text-secondary);border-color:transparent}
+.btn-ghost:hover{background:var(--bg-hover);color:var(--text-primary)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-xs{padding:3px 8px;font-size:11px}
+.btn-block{width:100%}
+
+/* ═══════════════════════════════════════════════════════════════════
+   APP LAYOUT — Header + Sidebar + Main
+   ═══════════════════════════════════════════════════════════════════ */
+.app{display:flex;flex-direction:column;min-height:100vh}
+
+/* ── Top Header Bar ── */
+.header{height:var(--header-h);background:var(--bg-surface);border-bottom:1px solid var(--border-primary);display:flex;align-items:center;padding:0 16px;position:sticky;top:0;z-index:100;gap:12px}
+.header .logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;letter-spacing:-.03em;color:var(--text-primary);min-width:fit-content;padding-right:16px;border-right:1px solid var(--border-primary);margin-right:4px}
+.header .logo .mark{width:24px;height:24px;border-radius:6px;background:var(--accent);display:flex;align-items:center;justify-content:center}
+.header .logo .mark svg{width:13px;height:13px;stroke:#fff;stroke-width:2.2;fill:none}
+.header .breadcrumb{display:flex;align-items:center;gap:6px;color:var(--text-muted);font-size:13px}
+.header .breadcrumb .sep{color:var(--text-dim)}
+.header .breadcrumb .current{color:var(--text-primary);font-weight:500}
+.header .spacer{flex:1}
+.header .env-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;font-size:11px;font-weight:600;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
+.header .env-badge.prod{background:var(--green-muted);color:var(--green-text);border:1px solid var(--green-border)}
+.header .env-badge.dev{background:var(--amber-muted);color:var(--amber-text);border:1px solid var(--amber-border)}
+.header .env-badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.header .h-btn{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--border-primary);background:var(--bg-card);color:var(--text-muted);transition:all .12s}
+.header .h-btn:hover{color:var(--text-primary);background:var(--bg-hover);border-color:var(--text-dim)}
+.header .h-btn svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.8;fill:none}
+.header .user-menu{display:flex;align-items:center;gap:8px;padding:4px 8px 4px 4px;border-radius:var(--radius-sm);cursor:pointer;transition:background .12s;border:1px solid transparent}
+.header .user-menu:hover{background:var(--bg-hover);border-color:var(--border-primary)}
+.header .user-menu .avatar{width:26px;height:26px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--purple));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:11px;flex-shrink:0}
+.header .user-menu .uname{font-size:13px;font-weight:500;color:var(--text-primary);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.header .user-dropdown{position:absolute;top:calc(var(--header-h) - 4px);right:16px;width:200px;background:var(--bg-card);border:1px solid var(--border-primary);border-radius:var(--radius);box-shadow:var(--shadow-lg);padding:4px;z-index:110;display:none}
+.header .user-dropdown.open{display:block}
+.header .user-dropdown .dd-item{display:flex;align-items:center;gap:8px;padding:8px 10px;font-size:13px;color:var(--text-secondary);border-radius:var(--radius-sm);cursor:pointer;transition:all .1s}
+.header .user-dropdown .dd-item:hover{background:var(--bg-hover);color:var(--text-primary)}
+.header .user-dropdown .dd-item svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.8;fill:none}
+.header .user-dropdown .dd-sep{height:1px;background:var(--border-primary);margin:4px 6px}
+.header .user-dropdown .dd-item.danger{color:var(--red-text)}
+.header .user-dropdown .dd-item.danger:hover{background:var(--red-muted)}
+
+/* ── Body (Sidebar + Content) ── */
+.app-body{display:flex;flex:1}
+
+/* ── Sidebar ── */
+.sidebar{width:var(--sidebar-w);background:var(--bg-surface);border-right:1px solid var(--border-primary);display:flex;flex-direction:column;position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));overflow-y:auto;overflow-x:hidden;flex-shrink:0;transition:width .2s var(--ease)}
+.sb-nav{flex:1;padding:8px}
+.nav-section{padding:16px 12px 6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);white-space:nowrap;overflow:hidden;transition:opacity .15s var(--ease)}
+.nav-section:first-child{padding-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:7px 12px;border-radius:var(--radius-sm);font-size:13px;font-weight:400;color:var(--text-muted);cursor:pointer;transition:all .1s var(--ease);margin-bottom:1px;position:relative;white-space:nowrap;overflow:hidden}
+.nav-item:hover{background:var(--bg-hover);color:var(--text-primary)}
+.nav-item.active{background:var(--accent-muted);color:var(--accent-text);font-weight:500}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:16px;border-radius:0 2px 2px 0;background:var(--accent)}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;stroke-width:1.8;fill:none;stroke:currentColor}
+.nav-item .nav-label{overflow:hidden;transition:opacity .15s var(--ease);white-space:nowrap}
+.sb-footer{padding:12px;border-top:1px solid var(--border-primary);transition:padding .2s var(--ease)}
+.sb-env{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);background:var(--bg-hover);margin-bottom:8px;font-size:12px;overflow:hidden;white-space:nowrap}
+.sb-env .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sb-env .dot.ok{background:var(--green);box-shadow:0 0 6px var(--green-muted)}
+.sb-env .e-label{color:var(--text-muted);transition:opacity .15s var(--ease)}
+.sb-env .e-value{color:var(--text-primary);font-weight:500;margin-left:auto;font-family:var(--mono);font-size:11px;transition:opacity .15s var(--ease)}
+
+/* Collapse toggle */
+.sb-collapse-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:8px 12px;margin-top:4px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;font-family:var(--font);font-size:12px;font-weight:500;border-radius:var(--radius-sm);transition:all .12s var(--ease);white-space:nowrap;overflow:hidden}
+.sb-collapse-btn:hover{background:var(--bg-hover);color:var(--text-primary)}
+.sb-collapse-btn svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.8;fill:none;flex-shrink:0;transition:transform .2s var(--ease)}
+.sb-collapse-btn .collapse-label{overflow:hidden;transition:opacity .15s var(--ease)}
+
+/* ── Collapsed state ── */
+.sidebar.collapsed{width:56px}
+.sidebar.collapsed .nav-section{opacity:0;height:0;padding:0 12px;margin:0;pointer-events:none}
+.sidebar.collapsed .nav-item{justify-content:center;padding:7px 0}
+.sidebar.collapsed .nav-item .nav-label{opacity:0;width:0;pointer-events:none}
+.sidebar.collapsed .nav-item.active::before{left:-2px}
+.sidebar.collapsed .sb-footer{padding:8px}
+.sidebar.collapsed .sb-env .e-label,.sidebar.collapsed .sb-env .e-value{opacity:0;width:0;overflow:hidden;pointer-events:none}
+.sidebar.collapsed .sb-env{justify-content:center;padding:8px;gap:0}
+.sidebar.collapsed .sb-collapse-btn{justify-content:center;padding:8px}
+.sidebar.collapsed .sb-collapse-btn .collapse-label{opacity:0;width:0;pointer-events:none}
+.sidebar.collapsed .sb-collapse-btn svg{transform:rotate(180deg)}
+
+/* Tooltip for collapsed nav items */
+.sidebar.collapsed .nav-item{position:relative}
+.sidebar.collapsed .nav-item::after{content:attr(data-tooltip);position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-primary);border-radius:var(--radius-sm);padding:4px 10px;font-size:12px;font-weight:500;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .12s;box-shadow:var(--shadow-md);z-index:99}
+.sidebar.collapsed .nav-item:hover::after{opacity:1}
+
+/* ── Main Content ── */
+.main{flex:1;min-width:0;padding:24px 32px;background:var(--bg-body)}
+
+/* Mobile */
+.mobile-trigger{display:none;width:32px;height:32px;border-radius:var(--radius-sm);align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--border-primary);background:var(--bg-card);color:var(--text-muted)}
+.mobile-trigger svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.8;fill:none}
+@media(max-width:768px){
+  .mobile-trigger{display:flex!important}
+  .sidebar{position:fixed;top:var(--header-h);left:0;bottom:0;z-index:90;transform:translateX(-100%);transition:transform .2s var(--ease)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay{position:fixed;inset:0;top:var(--header-h);background:rgba(0,0,0,.4);z-index:89;display:none}
+  .sidebar-overlay.open{display:block}
+  .main{padding:16px}
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PAGE HEADER
+   ═══════════════════════════════════════════════════════════════════ */
+.page-header{margin-bottom:24px}
+.page-header h1{font-size:22px;font-weight:700;letter-spacing:-.02em;line-height:1.3}
+.page-header p{color:var(--text-muted);font-size:13px;margin-top:2px}
+
+/* ═══════════════════════════════════════════════════════════════════
+   METRIC CARDS
+   ═══════════════════════════════════════════════════════════════════ */
+.metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.metric{background:var(--bg-card);border:1px solid var(--border-primary);border-radius:var(--radius);padding:16px;transition:border-color .15s}
+.metric:hover{border-color:var(--text-dim)}
+.metric .m-label{font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.metric .m-label svg{width:13px;height:13px;stroke:currentColor;stroke-width:2;fill:none;opacity:.6}
+.metric .m-value{font-family:var(--mono);font-size:22px;font-weight:600;line-height:1.2;color:var(--text-primary)}
+.metric .m-sub{font-size:11px;color:var(--text-dim);margin-top:4px;display:flex;align-items:center;gap:4px}
+.metric.accent .m-value{color:var(--accent-text)}.metric.green .m-value{color:var(--green-text)}.metric.amber .m-value{color:var(--amber-text)}.metric.red .m-value{color:var(--red-text)}.metric.purple .m-value{color:var(--purple-text)}.metric.teal .m-value{color:var(--teal-text)}.metric.cyan .m-value{color:var(--cyan-text)}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CHARTS
+   ═══════════════════════════════════════════════════════════════════ */
+.chart-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px}
+.chart-panel{background:var(--bg-card);border:1px solid var(--border-primary);border-radius:var(--radius);padding:16px;transition:border-color .15s}
+.chart-panel:hover{border-color:var(--text-dim)}
+.chart-panel .cp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.chart-panel .cp-title{font-size:13px;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:8px}
+.chart-panel .cp-meta{font-size:11px;color:var(--text-dim)}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:livePulse 2s ease infinite}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.3}}
+.chart-wrap{position:relative;width:100%;overflow:hidden}
+.chart-wrap canvas{display:block}
+@media(max-width:900px){.chart-grid{grid-template-columns:1fr}}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CARDS & TABLES
+   ═══════════════════════════════════════════════════════════════════ */
+.panel{background:var(--bg-card);border:1px solid var(--border-primary);border-radius:var(--radius);overflow:hidden}
+.panel-header{padding:16px;border-bottom:1px solid var(--border-primary);display:flex;align-items:center;justify-content:space-between}
+.panel-header h3{font-size:14px;font-weight:600;color:var(--text-primary)}
+.panel-body{padding:16px}
+.panel-body.flush{padding:0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{text-align:left;padding:10px 16px;font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);background:var(--bg-hover);border-bottom:1px solid var(--border-primary)}
+tbody td{padding:10px 16px;border-bottom:1px solid var(--border-subtle);color:var(--text-secondary);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--bg-hover)}
+table.no-hover tbody tr:hover td{background:transparent}
+.table-empty{text-align:center;padding:48px 16px;color:var(--text-dim)}
+.table-empty svg{width:40px;height:40px;stroke:var(--text-dim);stroke-width:1;fill:none;margin-bottom:12px;opacity:.5}
+.table-empty p{font-size:13px;margin-top:4px}
+
+/* ═══════════════════════════════════════════════════════════════════
+   BADGES & PILLS
+   ═══════════════════════════════════════════════════════════════════ */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;font-size:11px;font-weight:500;border-radius:999px;letter-spacing:.01em;border:1px solid transparent}
+.badge-success{background:var(--green-muted);color:var(--green-text);border-color:var(--green-border)}
+.badge-error{background:var(--red-muted);color:var(--red-text);border-color:var(--red-border)}
+.badge-warning{background:var(--amber-muted);color:var(--amber-text);border-color:var(--amber-border)}
+.badge-info{background:var(--accent-muted);color:var(--accent-text);border-color:var(--accent-border)}
+.badge-purple{background:var(--purple-muted);color:var(--purple-text);border-color:var(--purple-border)}
+.badge-neutral{background:var(--bg-hover);color:var(--text-muted);border-color:var(--border-primary)}
+.pill{display:inline-flex;align-items:center;padding:4px 12px;font-size:12px;font-weight:500;border:1px solid var(--border-primary);border-radius:999px;cursor:pointer;transition:all .12s;background:transparent;color:var(--text-muted);user-select:none}
+.pill:hover{border-color:var(--accent-border);color:var(--accent-text);background:var(--accent-muted)}
+.pill.sel{background:var(--accent-muted);border-color:var(--accent-border);color:var(--accent-text)}
+
+/* ═══════════════════════════════════════════════════════════════════
+   DEVICE BAR
+   ═══════════════════════════════════════════════════════════════════ */
+.device-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border-primary);border-radius:var(--radius);margin-bottom:16px}
+.device-bar .d-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text-dim)}
+.device-bar .chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;font-size:12px;font-weight:600;border-radius:var(--radius-sm);border:1px solid transparent}
+.device-bar .chip.cpu{background:var(--amber-muted);color:var(--amber-text);border-color:var(--amber-border)}
+.device-bar .chip.mps{background:var(--purple-muted);color:var(--purple-text);border-color:var(--purple-border)}
+.device-bar .chip.cuda{background:var(--green-muted);color:var(--green-text);border-color:var(--green-border)}
+.device-bar .chip.backend{background:var(--accent-muted);color:var(--accent-text);border-color:var(--accent-border)}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MODALS
+   ═══════════════════════════════════════════════════════════════════ */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity .15s var(--ease)}
+.overlay.open{opacity:1;pointer-events:auto}
+.modal{background:var(--bg-card);border:1px solid var(--border-primary);border-radius:var(--radius-lg);width:90%;max-width:480px;box-shadow:var(--shadow-lg);transform:translateY(8px) scale(.98);transition:transform .15s var(--ease)}
+.overlay.open .modal{transform:translateY(0) scale(1)}
+.modal-head{padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between}
+.modal-head h2{font-size:16px;font-weight:600;letter-spacing:-.01em}
+.modal-head .close{width:28px;height:28px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-dim);border:none;background:transparent;transition:all .12s}
+.modal-head .close:hover{background:var(--bg-hover);color:var(--text-primary)}
+.modal-head .close svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none}
+.modal-body{padding:20px 24px}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--border-primary);display:flex;justify-content:flex-end;gap:8px;background:var(--bg-hover)}
+.key-display{background:var(--bg-code);border:1px solid var(--border-primary);border-radius:var(--radius-sm);padding:12px 14px;font-family:var(--mono);font-size:12px;word-break:break-all;margin:12px 0;position:relative;line-height:1.6;color:var(--accent-text)}
+.key-display .copy-btn{position:absolute;top:6px;right:6px;padding:4px 8px;font-size:11px;border-radius:4px;cursor:pointer;background:var(--bg-card);border:1px solid var(--border-primary);color:var(--text-muted);font-family:var(--font);font-weight:500;transition:all .12s}
+.key-display .copy-btn:hover{color:var(--accent-text);border-color:var(--accent-border)}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PLAYGROUND
+   ═══════════════════════════════════════════════════════════════════ */
+.pg-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.dropzone{border:2px dashed var(--border-primary);border-radius:var(--radius);padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;color:var(--text-muted);position:relative}
+.dropzone:hover,.dropzone.dragover{border-color:var(--accent);background:var(--accent-muted);color:var(--accent-text)}
+.dropzone .dz-icon{width:48px;height:48px;border-radius:var(--radius);background:var(--bg-hover);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.dropzone .dz-icon svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.5;fill:none}
+.dropzone img{max-width:100%;max-height:240px;border-radius:var(--radius-sm);margin-top:12px;object-fit:contain}
+.result-box{background:var(--bg-code);border:1px solid var(--border-primary);border-radius:var(--radius);padding:16px;font-family:var(--mono);font-size:12px;min-height:220px;white-space:pre-wrap;overflow-y:auto;max-height:500px;line-height:1.65;color:var(--text-secondary)}
+@media(max-width:768px){.pg-grid{grid-template-columns:1fr}}
+
+/* ═══════════════════════════════════════════════════════════════════
+   TOASTS
+   ═══════════════════════════════════════════════════════════════════ */
+.toasts{position:fixed;top:calc(var(--header-h) + 12px);right:16px;z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{pointer-events:auto;background:var(--bg-card);border:1px solid var(--border-primary);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;font-weight:500;box-shadow:var(--shadow-md);animation:toastIn .2s var(--ease);max-width:360px;display:flex;align-items:center;gap:8px}
+.toast .t-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast.success .t-icon{background:var(--green-muted);color:var(--green-text)}
+.toast.error .t-icon{background:var(--red-muted);color:var(--red-text)}
+.toast.success{border-color:var(--green-border)}
+.toast.error{border-color:var(--red-border)}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+/* ═══════════════════════════════════════════════════════════════════
+   UTILITIES
+   ═══════════════════════════════════════════════════════════════════ */
+.mono{font-family:var(--mono)}.text-xs{font-size:11px}.text-sm{font-size:13px}.text-muted{color:var(--text-muted)}.text-dim{color:var(--text-dim)}
+.mt-1{margin-top:8px}.mt-2{margin-top:16px}.mt-3{margin-top:24px}.mb-1{margin-bottom:8px}.mb-2{margin-bottom:16px}.mb-3{margin-bottom:24px}
+.flex{display:flex}.items-center{align-items:center}.gap-1{gap:8px}.gap-2{gap:12px}.gap-3{gap:16px}.between{justify-content:space-between}.wrap{flex-wrap:wrap}
+.hidden{display:none!important}
+.spinner{width:16px;height:16px;border:2px solid var(--border-primary);border-top-color:var(--accent);border-radius:50%;animation:spin .5s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.truncate{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border-primary)}
+.pagination .pg-info{font-size:12px;color:var(--text-dim)}
+</style>
+</head>
+<body>
+
+<div class="toasts" id="toasts"></div>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeMobileSidebar()"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     AUTH SCREEN
+     ═══════════════════════════════════════════════════════════════════ -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-left">
+    <div class="auth-hero">
+      <h2>Self-hosted OCR<br>inference platform</h2>
+      <p>Deploy production-grade optical character recognition with full API management, usage analytics, and real-time monitoring.</p>
+      <div class="feature-list">
+        <div class="feature">
+          <div class="f-icon" style="background:var(--accent-muted);color:var(--accent-text)"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div><h4>Multi-format support</h4><p>OCR, tables, formulas, and chart recognition from images and PDFs</p></div>
+        </div>
+        <div class="feature">
+          <div class="f-icon" style="background:var(--green-muted);color:var(--green-text)"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.78 7.78 5.5 5.5 0 0 1 7.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg></div>
+          <div><h4>API key management</h4><p>Create, rotate, and scope API keys with fine-grained permissions</p></div>
+        </div>
+        <div class="feature">
+          <div class="f-icon" style="background:var(--purple-muted);color:var(--purple-text)"><svg viewBox="0 0 24 24" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+          <div><h4>Real-time monitoring</h4><p>Live CPU, memory, throughput, and latency metrics at a glance</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-box">
+      <div class="auth-logo">
+        <div class="logo-mark"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 2a10 10 0 0 0-10 10"/><path d="M12 22a10 10 0 0 0 10-10"/><path d="M12 22a10 10 0 0 1-10-10"/></svg></div>
+        <span>OCR Inference</span>
+      </div>
+      <div class="auth-title" id="auth-title">Sign in</div>
+      <div class="auth-sub" id="auth-subtitle">Enter your credentials to continue</div>
+      <form id="auth-form" autocomplete="off">
+        <div id="name-field" class="form-group hidden">
+          <label>Full name</label>
+          <input type="text" id="auth-name" class="form-input" placeholder="Jane Doe">
+        </div>
+        <div class="form-group">
+          <label>Email address</label>
+          <input type="email" id="auth-email" class="form-input" placeholder="you@company.com" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="auth-pass" class="form-input" placeholder="Minimum 8 characters" required minlength="8">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block mt-1" id="auth-btn">Sign in</button>
+      </form>
+      <div class="auth-swap">
+        <span id="auth-swap-text">Don't have an account?</span>
+        <a id="auth-swap-link" onclick="toggleAuth()"> Sign up</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     APP SHELL
+     ═══════════════════════════════════════════════════════════════════ -->
+<div id="app-screen" class="app hidden">
+  <!-- Header -->
+  <header class="header">
+    <div class="mobile-trigger" onclick="toggleMobileSidebar()"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></div>
+    <div class="logo">
+      <div class="mark"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 22a10 10 0 0 0 10-10"/></svg></div>
+      OCR Inference
+    </div>
+    <div class="breadcrumb">
+      <span>Console</span>
+      <span class="sep">/</span>
+      <span class="current" id="breadcrumb-page">Overview</span>
+    </div>
+    <div class="spacer"></div>
+    <div class="env-badge prod" id="status-badge"><div class="dot"></div><span id="status-text">Operational</span></div>
+    <div class="h-btn" onclick="toggleTheme()" title="Toggle theme" id="theme-btn">
+      <svg id="ico-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="ico-moon" class="hidden" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </div>
+    <div class="user-menu" onclick="toggleUserMenu()" id="user-menu-trigger">
+      <div class="avatar" id="user-av">U</div>
+      <span class="uname" id="user-name">User</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="user-dropdown" id="user-dropdown">
+      <div class="dd-item" style="pointer-events:none;opacity:.7">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span id="user-email">user@example.com</span>
+      </div>
+      <div class="dd-sep"></div>
+      <div class="dd-item danger" onclick="logout()">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign out
+      </div>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <nav class="sb-nav">
+        <div class="nav-section">Dashboard</div>
+        <div class="nav-item active" data-page="overview" data-tooltip="Overview" onclick="nav('overview')">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <span class="nav-label">Overview</span>
+        </div>
+        <div class="nav-item" data-page="monitor" data-tooltip="Monitor" onclick="nav('monitor')">
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span class="nav-label">Monitor</span>
+        </div>
+
+        <div class="nav-section">Resources</div>
+        <div class="nav-item" data-page="keys" data-tooltip="API Keys" onclick="nav('keys')">
+          <svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.78 7.78 5.5 5.5 0 0 1 7.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+          <span class="nav-label">API Keys</span>
+        </div>
+        <div class="nav-item" data-page="usage" data-tooltip="Usage" onclick="nav('usage')">
+          <svg viewBox="0 0 24 24"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+          <span class="nav-label">Usage</span>
+        </div>
+
+        <div class="nav-section">Developer</div>
+        <div class="nav-item" data-page="playground" data-tooltip="Playground" onclick="nav('playground')">
+          <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span class="nav-label">Playground</span>
+        </div>
+        <div class="nav-item" data-page="docs" data-tooltip="Docs" onclick="nav('docs')">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span class="nav-label">Documentation</span>
+        </div>
+      </nav>
+      <div class="sb-footer">
+        <div class="sb-env">
+          <div class="dot ok"></div>
+          <span class="e-label">Engine</span>
+          <span class="e-value" id="sb-engine">—</span>
+        </div>
+        <div class="sb-env">
+          <div class="dot ok" id="sb-device-dot"></div>
+          <span class="e-label">Device</span>
+          <span class="e-value" id="sb-device">—</span>
+        </div>
+        <button class="sb-collapse-btn" onclick="toggleSidebar()" title="Collapse sidebar">
+          <svg viewBox="0 0 24 24"><polyline points="11 17 6 12 11 7"/><polyline points="18 17 13 12 18 7"/></svg>
+          <span class="collapse-label">Collapse</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+
+      <!-- ═══ OVERVIEW ═══ -->
+      <div id="page-overview" class="page">
+        <div class="page-header flex between items-center">
+          <div><h1>Overview</h1><p>Platform health, usage metrics, and system status</p></div>
+          <div class="flex gap-2">
+            <span class="text-xs text-dim" id="ov-last-updated"></span>
+          </div>
+        </div>
+        <div id="ov-device-bar"></div>
+        <div class="metrics" id="ov-metrics"></div>
+        <div class="chart-grid">
+          <div class="chart-panel"><div class="cp-head"><span class="cp-title">Request Volume <span class="text-xs text-dim">(30 days)</span></span></div><div class="chart-wrap" style="height:180px"><canvas id="c-daily" data-h="180"></canvas></div></div>
+          <div class="chart-panel"><div class="cp-head"><span class="cp-title">Task Distribution</span></div><div class="chart-wrap" style="height:180px"><canvas id="c-tasks" data-h="180"></canvas></div></div>
+        </div>
+        <div class="chart-grid">
+          <div class="chart-panel"><div class="cp-head"><span class="cp-title"><span class="live-dot"></span>CPU Utilization</span><span class="cp-meta">Live</span></div><div class="chart-wrap" style="height:140px"><canvas id="c-ov-cpu" data-h="140"></canvas></div></div>
+          <div class="chart-panel"><div class="cp-head"><span class="cp-title"><span class="live-dot"></span>Memory Usage</span><span class="cp-meta">Live</span></div><div class="chart-wrap" style="height:140px"><canvas id="c-ov-mem" data-h="140"></canvas></div></div>
+        </div>
+      </div>
+
+      <!-- ═══ MONITOR ═══ -->
+      <div id="page-monitor" class="page hidden">
+        <div class="page-header"><h1>System Monitor</h1><p>Real-time infrastructure and inference performance metrics</p></div>
+        <div id="mon-device-bar"></div>
+        <div class="metrics" id="mon-metrics"></div>
+        <div class="chart-grid">
+          <div class="chart-panel"><div class="cp-head"><span class="cp-title"><span class="live-dot"></span>CPU Utilization (%)</span><span class="cp-meta">2s interval</span></div><div class="chart-wrap" style="height:180px"><canvas id="c-cpu" data-h="180"></canvas></div></div>
+          <div class="chart-panel"><div class="cp-head"><span class="cp-title"><span class="live-dot"></span>Memory Usage (%)</span><span class="cp-meta">2s interval</span></div><div class="chart-wrap" style="height:180px"><canvas id="c-mem" data-h="180"></canvas></div></div>
+        </div>
+        <div class="chart-grid">
+          <div class="chart-panel"><div class="cp-head"><span class="cp-title"><span class="live-dot"></span>Throughput (req/s)</span><span class="cp-meta">10s window</span></div><div class="chart-wrap" style="height:180px"><canvas id="c-rps" data-h="180"></canvas></div></div>
+          <div class="chart-panel"><div class="cp-head"><span class="cp-title"><span class="live-dot"></span>Response Latency (s)</span><span class="cp-meta">Avg</span></div><div class="chart-wrap" style="height:180px"><canvas id="c-lat" data-h="180"></canvas></div></div>
+        </div>
+      </div>
+
+      <!-- ═══ API KEYS ═══ -->
+      <div id="page-keys" class="page hidden">
+        <div class="page-header flex between items-center">
+          <div><h1>API Keys</h1><p>Manage credentials for programmatic access</p></div>
+          <button class="btn btn-primary" onclick="openCreateKey()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Create key</button>
+        </div>
+        <div class="panel">
+          <div class="panel-body flush">
+            <table>
+              <thead><tr><th>Name</th><th>Key</th><th>Scope</th><th>Status</th><th>Requests</th><th>Created</th><th style="width:80px"></th></tr></thead>
+              <tbody id="keys-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ USAGE ═══ -->
+      <div id="page-usage" class="page hidden">
+        <div class="page-header"><h1>Usage</h1><p>Inference request history and audit log</p></div>
+        <div class="panel">
+          <div class="panel-body flush">
+            <table>
+              <thead><tr><th>Timestamp</th><th>Endpoint</th><th>Task</th><th>Tokens</th><th>Latency</th><th>Status</th></tr></thead>
+              <tbody id="usage-body"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <span class="pg-info" id="usage-info"></span>
+            <div class="flex gap-1">
+              <button class="btn btn-secondary btn-sm" id="usage-prev" onclick="loadUsage(usagePg-1)">Previous</button>
+              <button class="btn btn-secondary btn-sm" id="usage-next" onclick="loadUsage(usagePg+1)">Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ PLAYGROUND ═══ -->
+      <div id="page-playground" class="page hidden">
+        <div class="page-header"><h1>Playground</h1><p>Test OCR inference directly in your browser</p></div>
+        <div class="flex gap-2 mb-2 wrap">
+          <div class="form-group" style="min-width:160px;flex:1"><label>Task type</label>
+            <select id="pg-task" class="form-input"><option value="auto" selected>Auto Detect</option></select>
+            <p class="text-xs text-dim mt-1">PaddleOCRVL auto-detects text, tables, formulas &amp; charts</p>
+          </div>
+          <div class="form-group" style="min-width:280px;flex:2"><label>API key</label>
+            <input type="text" id="pg-apikey" class="form-input mono" placeholder="dots_...">
+          </div>
+        </div>
+        <div class="pg-grid">
+          <div>
+            <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
+              <div class="dz-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+              <p style="font-weight:500;font-size:14px">Drop an image or PDF, or click to upload</p>
+              <p class="text-xs text-dim mt-1">Supports PNG, JPG, WEBP, PDF — PDFs auto-detect all content types</p>
+              <input type="file" id="file-input" accept="image/*,.pdf" style="display:none">
+            </div>
+          </div>
+          <div>
+            <div class="flex between items-center mb-1"><span class="text-sm" style="font-weight:600">Output</span><button class="btn btn-ghost btn-xs" onclick="copyResult()">Copy</button></div>
+            <div class="result-box" id="result-box">Results will appear here...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ DOCS ═══ -->
+      <div id="page-docs" class="page hidden">
+        <div class="page-header"><h1>Documentation</h1><p>Integrate DotsOCR into your applications</p></div>
+        <div id="docs-device-bar" class="mb-2"></div>
+
+        <div class="panel mb-2">
+          <div class="panel-header"><h3>Quick Start — OpenAI SDK</h3><span class="badge badge-success">Recommended</span></div>
+          <div class="panel-body">
+            <pre><code>from openai import OpenAI
+import base64
+
+client = OpenAI(
+    base_url="<span class="doc-url"></span>/v1",
+    api_key="dots_YOUR_API_KEY",
+)
+
+with open("document.png", "rb") as f:
+    b64 = base64.b64encode(f.read()).decode()
+
+response = client.chat.completions.create(
+    model="paddleocr-vl",
+    messages=[{
+        "role": "user",
+        "content": [
+            {"type": "text", "text": "OCR:"},
+            {"type": "image_url", "image_url": {
+                "url": f"data:image/png;base64,{b64}"
+            }}
+        ]
+    }],
+    max_tokens=4096
+)
+print(response.choices[0].message.content)</code></pre>
+          </div>
+        </div>
+
+        <div class="panel mb-2">
+          <div class="panel-header"><h3>cURL</h3></div>
+          <div class="panel-body">
+            <pre><code>curl -X POST <span class="doc-url"></span>/v1/chat/completions \
+  -H "Authorization: Bearer dots_YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "paddleocr-vl",
+    "messages": [{
+      "role": "user",
+      "content": [
+        {"type": "text", "text": "OCR:"},
+        {"type": "image_url", "image_url": {
+          "url": "data:image/png;base64,..."
+        }}
+      ]
+    }],
+    "max_tokens": 4096
+  }'</code></pre>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><h3>Supported Tasks</h3></div>
+          <div class="panel-body flush">
+            <table class="no-hover">
+              <thead><tr><th>Task</th><th>Prompt</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>auto</code></td><td><span class="badge badge-info">Auto</span></td><td>PaddleOCRVL auto-detects text, tables, formulas &amp; charts in a single pass</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ═══ Create Key Modal ═══ -->
+<div class="overlay" id="modal-new-key">
+  <div class="modal">
+    <div class="modal-head"><h2>Create API key</h2><button class="close" onclick="closeModal('modal-new-key')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Key name</label><input type="text" id="nk-name" class="form-input" placeholder="e.g., production-backend" value="Default"></div>
+      <div class="form-group"><label>Expiration (days)</label><input type="number" id="nk-expires" class="form-input" placeholder="Leave blank for no expiration" min="1" max="365"></div>
+      <div class="form-group">
+        <label>Task scope</label>
+        <p class="text-xs text-dim mb-1">Restrict this key to specific tasks. Leave empty for full access.</p>
+        <div class="flex wrap gap-1" id="nk-task-pills"></div>
+      </div>
+      <div class="form-group mt-2">
+        <label>Infrastructure</label>
+        <div class="device-bar" id="nk-processor-info" style="margin-bottom:0"><span class="text-xs text-dim">Detecting processor…</span></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-secondary" onclick="closeModal('modal-new-key')">Cancel</button><button class="btn btn-primary" onclick="createKey()">Create key</button></div>
+  </div>
+</div>
+
+<!-- ═══ Key Created Modal ═══ -->
+<div class="overlay" id="modal-key-done">
+  <div class="modal">
+    <div class="modal-head"><h2>Key created</h2><button class="close" onclick="closeModal('modal-key-done')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body">
+      <p class="text-sm text-muted">Copy your secret key now. You won't be able to see it again.</p>
+      <div class="key-display"><span id="key-value"></span><button class="copy-btn" onclick="copyNewKey()">Copy</button></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-primary" onclick="closeModal('modal-key-done')">Done</button></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════════════════════════════ */
+let token = localStorage.getItem('token');
+let user = null;
+let curPage = 'overview';
+let usagePg = 1;
+let liveTimer = null;
+let tasks = [];
+let procInfo = null;
+let keyStore = {};
+
+/* ═══════════════════════════════════════════════════════════════════
+   THEME
+   ═══════════════════════════════════════════════════════════════════ */
+function initTheme() {
+  const t = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  syncThemeUI(t);
+}
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  syncThemeUI(next);
+  if (curPage === 'overview') loadOverview();
+}
+function syncThemeUI(t) {
+  document.getElementById('ico-sun').classList.toggle('hidden', t === 'dark');
+  document.getElementById('ico-moon').classList.toggle('hidden', t !== 'dark');
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════════════════════════════════ */
+function toast(msg, type = 'success') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  const icon = type === 'success'
+    ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'
+    : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  el.innerHTML = '<div class="t-icon">' + icon + '</div>' + esc(msg);
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateX(20px)'; setTimeout(() => el.remove(), 200); }, 3500);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   API HELPER
+   ═══════════════════════════════════════════════════════════════════ */
+async function api(path, opts = {}) {
+  const h = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
+  if (token) h['Authorization'] = 'Bearer ' + token;
+  const res = await fetch(path, { ...opts, headers: h });
+  if (res.status === 401) { logout(); throw new Error('Session expired'); }
+  if (res.status === 204) return null;
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.detail || 'Request failed');
+  return data;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   AUTH
+   ═══════════════════════════════════════════════════════════════════ */
+let isReg = false;
+function toggleAuth() {
+  isReg = !isReg;
+  document.getElementById('name-field').classList.toggle('hidden', !isReg);
+  document.getElementById('auth-title').textContent = isReg ? 'Create account' : 'Sign in';
+  document.getElementById('auth-subtitle').textContent = isReg ? 'Get started with DotsOCR' : 'Enter your credentials to continue';
+  document.getElementById('auth-btn').textContent = isReg ? 'Create account' : 'Sign in';
+  document.getElementById('auth-swap-text').textContent = isReg ? 'Already have an account?' : "Don't have an account?";
+  document.getElementById('auth-swap-link').textContent = isReg ? ' Sign in' : ' Sign up';
+}
+
+document.getElementById('auth-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = document.getElementById('auth-email').value;
+  const pw = document.getElementById('auth-pass').value;
+  try {
+    let d;
+    if (isReg) {
+      const name = document.getElementById('auth-name').value;
+      if (!name) { toast('Name is required', 'error'); return; }
+      d = await api('/auth/register', { method: 'POST', body: JSON.stringify({ email, password: pw, name }) });
+    } else {
+      d = await api('/auth/login', { method: 'POST', body: JSON.stringify({ email, password: pw }) });
+    }
+    token = d.access_token; user = d.user;
+    localStorage.setItem('token', token);
+    showApp();
+    toast('Welcome back');
+  } catch (err) { toast(err.message, 'error'); }
+});
+
+function logout() {
+  token = null; user = null;
+  localStorage.removeItem('token');
+  stopLive();
+  document.getElementById('app-screen').classList.add('hidden');
+  document.getElementById('auth-screen').classList.remove('hidden');
+  document.getElementById('auth-screen').style.display = '';
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════════════════════ */
+const pageNames = { overview:'Overview', monitor:'Monitor', keys:'API Keys', usage:'Usage', playground:'Playground', docs:'Documentation' };
+
+function nav(page) {
+  curPage = page;
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  document.getElementById('page-' + page).classList.remove('hidden');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === page));
+  document.getElementById('breadcrumb-page').textContent = pageNames[page] || page;
+  closeMobileSidebar();
+  stopLive();
+  if (page === 'overview') loadOverview();
+  else if (page === 'monitor') startLive();
+  else if (page === 'keys') loadKeys();
+  else if (page === 'usage') loadUsage(1);
+  else if (page === 'playground') initPg();
+  else if (page === 'docs') initDocs();
+}
+
+function toggleMobileSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('open');
+}
+function closeMobileSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+
+/* ── Sidebar Collapse ── */
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const collapsed = sb.classList.toggle('collapsed');
+  localStorage.setItem('sb-collapsed', collapsed ? '1' : '0');
+  // Redraw charts after transition completes
+  setTimeout(() => { if (curPage === 'overview') loadOverview(); else if (curPage === 'monitor') poll(); }, 220);
+}
+function initSidebarState() {
+  if (localStorage.getItem('sb-collapsed') === '1') {
+    document.getElementById('sidebar').classList.add('collapsed');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   USER MENU
+   ═══════════════════════════════════════════════════════════════════ */
+function toggleUserMenu() {
+  document.getElementById('user-dropdown').classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  const menu = document.getElementById('user-dropdown');
+  const trigger = document.getElementById('user-menu-trigger');
+  if (menu && !menu.contains(e.target) && !trigger.contains(e.target)) {
+    menu.classList.remove('open');
+  }
+});
+
+/* ═══════════════════════════════════════════════════════════════════
+   APP INIT
+   ═══════════════════════════════════════════════════════════════════ */
+async function showApp() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app-screen').classList.remove('hidden');
+  try {
+    const me = await api('/auth/me');
+    user = me;
+    document.getElementById('user-name').textContent = me.name;
+    document.getElementById('user-email').textContent = me.email;
+    document.getElementById('user-av').textContent = me.name.charAt(0).toUpperCase();
+  } catch { logout(); return; }
+  try { keyStore = JSON.parse(sessionStorage.getItem('keyStore') || '{}'); } catch {}
+  await loadProcessorInfo();
+  nav('overview');
+}
+
+async function loadProcessorInfo() {
+  try {
+    procInfo = await api('/dashboard/processors');
+    tasks = procInfo.available_tasks || [];
+    const dev = (procInfo.device || 'cpu').toUpperCase();
+    const be = procInfo.backend || 'transformers';
+    document.getElementById('sb-engine').textContent = be;
+    document.getElementById('sb-device').textContent = dev;
+  } catch {
+    procInfo = null; tasks = [];
+  }
+}
+
+function renderDeviceBar(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el || !procInfo) { if (el) el.innerHTML = ''; return; }
+  const dev = (procInfo.device || 'cpu').toLowerCase();
+  const devClass = dev === 'cuda' ? 'cuda' : dev === 'mps' ? 'mps' : 'cpu';
+  el.innerHTML = '<div class="device-bar">' +
+    '<span class="d-label">Processor</span>' +
+    '<span class="chip ' + devClass + '">' + dev.toUpperCase() + '</span>' +
+    '<span class="d-label" style="margin-left:8px">Backend</span>' +
+    '<span class="chip backend">' + esc(procInfo.backend || 'transformers') + '</span>' +
+    '</div>';
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   OVERVIEW
+   ═══════════════════════════════════════════════════════════════════ */
+async function loadOverview() {
+  renderDeviceBar('ov-device-bar');
+  try {
+    const [stats, live] = await Promise.all([api('/dashboard/stats?days=30'), api('/dashboard/live')]);
+    document.getElementById('ov-last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+    document.getElementById('ov-metrics').innerHTML =
+      mk('accent', 'Total Requests', fmtN(stats.total_requests), 'Last 30 days') +
+      mk('purple', 'Total Tokens', fmtN(stats.total_tokens), 'Last 30 days') +
+      mk('green', 'Avg Latency', stats.avg_latency_seconds.toFixed(2) + 's', 'Successful requests') +
+      mk('amber', 'Error Rate', stats.error_rate_percent.toFixed(1) + '%', stats.active_api_keys + ' active keys') +
+      mk('teal', 'CPU', live.system.cpu_percent.toFixed(0) + '%', 'Current utilization') +
+      mk('red', 'Memory', live.system.memory_used_gb + ' GB', live.system.memory_percent.toFixed(0) + '% of ' + live.system.memory_total_gb + ' GB') +
+      mk('cyan', 'Throughput', live.inference.rps_10s + ' rps', live.inference.total_inferences + ' total inferences') +
+      mk('accent', 'Uptime', fmtUp(live.uptime_seconds), live.inference.total_errors + ' errors');
+
+    drawBarChart('c-daily', stats.daily_usage.map(d => d.date.slice(5)), stats.daily_usage.map(d => d.requests));
+    const tl = Object.keys(stats.task_breakdown || {}), tv = Object.values(stats.task_breakdown || {});
+    tl.length ? drawDonutChart('c-tasks', tl, tv) : drawEmptyChart('c-tasks', 'No task data yet');
+    drawLineChart('c-ov-cpu', live.history.cpu, '--ch-line', '--ch-fill', '%', 0, 100);
+    drawLineChart('c-ov-mem', live.history.memory, '--ch-green', '--ch-green-fill', '%', 0, 100);
+
+    // Update status badge
+    const badge = document.getElementById('status-badge');
+    const statusText = document.getElementById('status-text');
+    if (live.inference.total_errors > 0 && live.inference.error_rate > 10) {
+      badge.className = 'env-badge dev';
+      statusText.textContent = 'Degraded';
+    } else {
+      badge.className = 'env-badge prod';
+      statusText.textContent = 'Operational';
+    }
+  } catch (e) { console.error('Overview:', e); }
+}
+
+function mk(color, label, value, sub) {
+  return '<div class="metric ' + color + '"><div class="m-label">' + esc(label) + '</div><div class="m-value">' + value + '</div><div class="m-sub">' + esc(sub) + '</div></div>';
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MONITOR
+   ═══════════════════════════════════════════════════════════════════ */
+function startLive() { stopLive(); renderDeviceBar('mon-device-bar'); poll(); liveTimer = setInterval(poll, 3000); }
+function stopLive() { if (liveTimer) { clearInterval(liveTimer); liveTimer = null; } }
+
+async function poll() {
+  try {
+    const l = await api('/dashboard/live');
+    document.getElementById('mon-metrics').innerHTML =
+      mk('accent', 'CPU', l.system.cpu_percent.toFixed(1) + '%', 'Utilization') +
+      mk('green', 'Memory', l.system.memory_percent.toFixed(1) + '%', l.system.memory_used_gb + ' / ' + l.system.memory_total_gb + ' GB') +
+      mk('purple', 'Throughput', l.inference.rps_10s + ' rps', l.inference.rpm_60s + ' RPM') +
+      mk('amber', 'Avg Latency', l.inference.avg_latency.toFixed(3) + 's', 'P95: ' + l.inference.p95_latency.toFixed(3) + 's') +
+      mk('teal', 'Total Inferences', fmtN(l.inference.total_inferences), 'Since startup') +
+      mk('red', 'Errors', String(l.inference.total_errors), l.inference.error_rate + '% error rate') +
+      mk('cyan', 'In Flight', String(l.inference.active_requests), 'Active requests') +
+      mk('accent', 'Uptime', fmtUp(l.uptime_seconds), 'Runtime');
+
+    drawLineChart('c-cpu', l.history.cpu, '--ch-line', '--ch-fill', '%', 0, 100);
+    drawLineChart('c-mem', l.history.memory, '--ch-green', '--ch-green-fill', '%', 0, 100);
+    drawLineChart('c-rps', l.history.rps, '--ch-purple', '--ch-purple-fill', ' rps');
+    drawLineChart('c-lat', l.history.latency, '--ch-amber', '--ch-amber-fill', 's');
+  } catch (e) { console.error('Poll:', e); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   API KEYS
+   ═══════════════════════════════════════════════════════════════════ */
+async function loadKeys() {
+  try {
+    const keys = await api('/auth/api-keys');
+    const tb = document.getElementById('keys-body');
+    if (!keys.length) {
+      tb.innerHTML = '<tr><td colspan="7" class="table-empty"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.78 7.78 5.5 5.5 0 0 1 7.78-7.78zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg><p>No API keys yet</p><p class="text-dim">Create a key to get started with the API</p></td></tr>';
+      return;
+    }
+    tb.innerHTML = keys.map(k => '<tr>' +
+      '<td style="font-weight:500;color:var(--text-primary)">' + esc(k.name) + '</td>' +
+      '<td><code class="text-dim">' + esc(k.key_prefix) + '…</code></td>' +
+      '<td>' + (k.allowed_tasks ? k.allowed_tasks.map(t => '<span class="badge badge-info" style="margin-right:3px">' + esc(t) + '</span>').join('') : '<span class="text-xs text-dim">All tasks</span>') + '</td>' +
+      '<td><span class="badge ' + (k.is_active ? 'badge-success' : 'badge-error') + '">' + (k.is_active ? 'Active' : 'Revoked') + '</span></td>' +
+      '<td class="mono">' + fmtN(k.total_requests) + '</td>' +
+      '<td class="text-dim">' + new Date(k.created_at).toLocaleDateString() + '</td>' +
+      '<td>' + (k.is_active ? '<button class="btn btn-danger btn-xs" onclick="revokeKey(' + k.id + ')">Revoke</button>' : '') + '</td>' +
+      '</tr>').join('');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function openCreateKey() {
+  const c = document.getElementById('nk-task-pills');
+  const render = ts => { c.innerHTML = ts.map(t => '<span class="pill" data-task="' + esc(t.id) + '" onclick="this.classList.toggle(\'sel\')">' + esc(t.name) + '</span>').join(''); };
+  if (tasks.length) render(tasks);
+  else { c.innerHTML = '<span class="text-xs text-dim">Loading…</span>'; api('/dashboard/processors').then(p => { tasks = p.available_tasks || []; render(tasks); }).catch(() => { c.innerHTML = '<span class="text-xs text-dim">Unavailable</span>'; }); }
+
+  const pi = document.getElementById('nk-processor-info');
+  if (procInfo) {
+    const dev = (procInfo.device || 'cpu').toLowerCase();
+    const devClass = dev === 'cuda' ? 'cuda' : dev === 'mps' ? 'mps' : 'cpu';
+    pi.innerHTML =
+      '<span class="d-label">Device</span>' +
+      '<span class="chip ' + devClass + '">' + dev.toUpperCase() + '</span>' +
+      '<span class="d-label" style="margin-left:8px">Backend</span>' +
+      '<span class="chip backend">' + esc(procInfo.backend || 'transformers') + '</span>';
+  } else {
+    pi.innerHTML = '<span class="text-xs text-dim">Processor info unavailable</span>';
+  }
+
+  document.getElementById('nk-name').value = 'Default';
+  document.getElementById('nk-expires').value = '';
+  openModal('modal-new-key');
+}
+
+async function createKey() {
+  const name = document.getElementById('nk-name').value || 'Default';
+  const exp = document.getElementById('nk-expires').value;
+  const selTasks = Array.from(document.querySelectorAll('#nk-task-pills .pill.sel')).map(p => p.dataset.task);
+  const body = { name };
+  if (exp) body.expires_in_days = parseInt(exp);
+  if (selTasks.length) body.allowed_tasks = selTasks;
+  try {
+    const d = await api('/auth/api-keys', { method: 'POST', body: JSON.stringify(body) });
+    closeModal('modal-new-key');
+    keyStore[d.id] = d.key;
+    sessionStorage.setItem('keyStore', JSON.stringify(keyStore));
+    document.getElementById('key-value').textContent = d.key;
+    openModal('modal-key-done');
+    loadKeys();
+    toast('API key created');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function revokeKey(id) {
+  if (!confirm('Revoke this API key? This action cannot be undone.')) return;
+  try { await api('/auth/api-keys/' + id, { method: 'DELETE' }); loadKeys(); toast('Key revoked'); }
+  catch(e) { toast(e.message, 'error'); }
+}
+function copyNewKey() { navigator.clipboard.writeText(document.getElementById('key-value').textContent); toast('Copied to clipboard'); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   USAGE
+   ═══════════════════════════════════════════════════════════════════ */
+async function loadUsage(pg) {
+  if (pg < 1) return;
+  usagePg = pg;
+  try {
+    const d = await api('/dashboard/usage?page=' + pg + '&per_page=30');
+    const tb = document.getElementById('usage-body');
+    if (!d.records.length) {
+      tb.innerHTML = '<tr><td colspan="6" class="table-empty"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg><p>No usage records</p><p class="text-dim">Requests will appear here once you start making API calls</p></td></tr>';
+    } else {
+      tb.innerHTML = d.records.map(r => '<tr>' +
+        '<td class="text-dim mono text-xs">' + new Date(r.created_at).toLocaleString() + '</td>' +
+        '<td><code>' + esc(r.endpoint || '-') + '</code></td>' +
+        '<td>' + (r.task ? '<span class="badge badge-info">' + esc(r.task) + '</span>' : '<span class="text-dim">-</span>') + '</td>' +
+        '<td class="mono">' + fmtN(r.total_tokens || 0) + '</td>' +
+        '<td class="mono">' + (r.elapsed_seconds ? r.elapsed_seconds.toFixed(2) + 's' : '-') + '</td>' +
+        '<td><span class="badge ' + (r.status_code < 400 ? 'badge-success' : 'badge-error') + '">' + r.status_code + '</span></td>' +
+        '</tr>').join('');
+    }
+    document.getElementById('usage-info').textContent = 'Page ' + d.page + ' of ' + d.total_pages + ' (' + d.total + ' records)';
+    document.getElementById('usage-prev').disabled = d.page <= 1;
+    document.getElementById('usage-next').disabled = d.page >= d.total_pages;
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PLAYGROUND
+   ═══════════════════════════════════════════════════════════════════ */
+function initPg() {
+  const k = document.getElementById('pg-apikey');
+  if (!k.value) { const v = Object.values(keyStore); if (v.length) k.value = v[v.length - 1]; }
+}
+
+(function() {
+  const dz = document.getElementById('dropzone'), fi = document.getElementById('file-input');
+  ['dragenter','dragover'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('dragover'); }));
+  ['dragleave','drop'].forEach(ev => dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('dragover'); }));
+  dz.addEventListener('drop', e => handleFile(e.dataTransfer.files[0]));
+  fi.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
+})();
+
+async function handleFile(file) {
+  if (!file) return;
+  const apiKey = document.getElementById('pg-apikey').value;
+  if (!apiKey) { toast('Enter an API key first', 'error'); return; }
+  const task = document.getElementById('pg-task').value;
+  const rb = document.getElementById('result-box');
+  const dz = document.getElementById('dropzone');
+  const isPdf = file.type === 'application/pdf' || (file.name && file.name.toLowerCase().endsWith('.pdf'));
+
+  if (file.type.startsWith('image/')) {
+    const u = URL.createObjectURL(file);
+    dz.innerHTML = '<img src="' + u + '"><p class="text-xs text-dim mt-1">' + esc(file.name) + '</p>';
+  } else {
+    dz.innerHTML = '<p style="padding:24px;font-weight:500">' + esc(file.name) + '</p>';
+  }
+
+  // Show a live timer while processing
+  let elapsed = 0;
+  rb.innerHTML = '<div style="text-align:center;padding:24px"><div class="spinner" style="display:inline-block;width:24px;height:24px;border:3px solid rgba(99,102,241,.25);border-top-color:#6366f1;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:8px"></div><div id="proc-timer" style="font-size:14px;color:#888">Processing… 0s</div><div style="font-size:12px;color:#aaa;margin-top:4px">First request may take longer while the model loads</div></div>';
+  const timerEl = document.getElementById('proc-timer');
+  const timerInterval = setInterval(() => {
+    elapsed++;
+    if (timerEl) timerEl.textContent = 'Processing… ' + elapsed + 's';
+  }, 1000);
+
+  try {
+    // Use /convert for everything — it returns both raw + HTML content
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('task', isPdf ? 'auto' : (task || 'auto'));
+    formData.append('max_tokens', '1024');
+
+    const res = await fetch('/convert', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + apiKey },
+      body: formData
+    });
+    clearInterval(timerInterval);
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.detail || d.error?.message || 'Processing failed');
+
+    // Render as HTML — use content_html (converted) or content (raw for PDF auto)
+    const htmlContent = d.content_html || d.content || '';
+    const hasHtml = htmlContent.includes('<table') || htmlContent.includes('<p>') || htmlContent.includes('<h') || htmlContent.includes('<!DOCTYPE');
+
+    if (hasHtml) {
+      // Wrap HTML fragment in a styled document for iframe rendering
+      const fullHtml = htmlContent.trim().startsWith('<!DOCTYPE') ? htmlContent : '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:system-ui,-apple-system,sans-serif;padding:16px;color:#1a1a1a;font-size:14px;line-height:1.6;margin:0}table{border-collapse:collapse;width:100%;margin:12px 0}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#f5f5f5;font-weight:600}h1,h2,h3,h4,h5,h6{margin:16px 0 8px}p{margin:8px 0}pre,code{background:#f5f5f5;padding:2px 6px;border-radius:4px;font-size:13px}pre{padding:12px;overflow-x:auto}blockquote{border-left:3px solid #ddd;margin:12px 0;padding:4px 16px;color:#555}.math-block,.math-inline{font-family:serif;font-style:italic}ul,ol{margin:8px 0;padding-left:24px}hr{border:none;border-top:1px solid #ddd;margin:16px 0}</style></head><body>' + htmlContent + '</body></html>';
+      rb.innerHTML = '';
+      const iframe = document.createElement('iframe');
+      iframe.style.cssText = 'width:100%;border:none;min-height:200px;background:#fff;border-radius:6px;';
+      rb.appendChild(iframe);
+      iframe.contentDocument.open();
+      iframe.contentDocument.write(fullHtml);
+      iframe.contentDocument.close();
+      setTimeout(() => { try { iframe.style.height = Math.max(200, iframe.contentDocument.body.scrollHeight + 20) + 'px'; } catch(e) {} }, 200);
+    } else {
+      rb.textContent = d.content || JSON.stringify(d, null, 2);
+    }
+
+    const elapsedSec = d.elapsed_seconds ? ` (${d.elapsed_seconds}s)` : '';
+    const pages = d.total_pages ? `, ${d.total_pages} page${d.total_pages > 1 ? 's' : ''}` : '';
+    toast('Processed' + elapsedSec + pages, 'success');
+  } catch(e) {
+    clearInterval(timerInterval);
+    rb.textContent = 'Error: ' + e.message;
+    toast(e.message, 'error');
+  }
+}
+function copyResult() {
+  const rb = document.getElementById('result-box');
+  const iframe = rb.querySelector('iframe');
+  const text = iframe ? iframe.contentDocument.body.innerText : rb.textContent;
+  navigator.clipboard.writeText(text);
+  toast('Copied');
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   DOCS
+   ═══════════════════════════════════════════════════════════════════ */
+function initDocs() {
+  const base = location.protocol + '//' + location.host;
+  document.querySelectorAll('.doc-url').forEach(el => el.textContent = base);
+  renderDeviceBar('docs-device-bar');
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CHART ENGINE — Stable canvas sizing via data-h attribute
+   ═══════════════════════════════════════════════════════════════════ */
+function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+function resolveClr(c) { return c.startsWith('--') ? css(c) : c; }
+
+function prepCanvas(canvas) {
+  const wrap = canvas.parentElement;
+  const dpr = window.devicePixelRatio || 1;
+  const w = wrap.clientWidth;
+  const h = parseInt(canvas.getAttribute('data-h')) || 180;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+  return { ctx, w, h };
+}
+
+function drawLineChart(id, data, lineVar, fillVar, unit, minY, maxY) {
+  const canvas = document.getElementById(id); if (!canvas) return;
+  const { ctx, w, h } = prepCanvas(canvas);
+  if (!data || !data.length) { drawEmptyChart(id, 'Waiting for data…'); return; }
+  const vals = data.map(d => d.v);
+  const P = { t: 10, r: 10, b: 24, l: 42 };
+  const cw = w - P.l - P.r, ch = h - P.t - P.b;
+  let yMin = minY != null ? minY : Math.min(...vals) * 0.9;
+  let yMax = maxY != null ? maxY : Math.max(...vals) * 1.1 || 1;
+  if (yMin === yMax) { yMin = 0; yMax = yMax || 1; }
+
+  // Grid
+  ctx.strokeStyle = css('--ch-grid'); ctx.lineWidth = 1; ctx.setLineDash([2, 3]);
+  ctx.fillStyle = css('--ch-label'); ctx.font = '10px ' + css('--mono'); ctx.textAlign = 'right';
+  for (let i = 0; i <= 4; i++) {
+    const y = P.t + (ch / 4) * i;
+    const v = yMax - ((yMax - yMin) / 4) * i;
+    ctx.beginPath(); ctx.moveTo(P.l, y); ctx.lineTo(w - P.r, y); ctx.stroke();
+    ctx.fillText(v.toFixed(v < 10 ? 1 : 0) + unit, P.l - 4, y + 3);
+  }
+  ctx.setLineDash([]);
+
+  // Time labels
+  ctx.textAlign = 'center';
+  const step = Math.max(1, Math.floor(data.length / 6));
+  for (let i = 0; i < data.length; i += step) {
+    const x = P.l + (i / (data.length - 1 || 1)) * cw;
+    const t = data[i].t;
+    ctx.fillText(t ? t.slice(11, 16) : '', x, h - 4);
+  }
+
+  // Area + line
+  const lc = resolveClr(lineVar), fc = resolveClr(fillVar);
+  ctx.beginPath();
+  for (let i = 0; i < vals.length; i++) {
+    const x = P.l + (i / (vals.length - 1 || 1)) * cw;
+    const y = P.t + ch - ((vals[i] - yMin) / (yMax - yMin)) * ch;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.strokeStyle = lc; ctx.lineWidth = 1.5; ctx.lineJoin = 'round'; ctx.stroke();
+  ctx.lineTo(P.l + cw, P.t + ch); ctx.lineTo(P.l, P.t + ch); ctx.closePath();
+  ctx.fillStyle = fc; ctx.fill();
+
+  // Endpoint dot
+  if (vals.length) {
+    const lx = P.l + cw, ly = P.t + ch - ((vals[vals.length - 1] - yMin) / (yMax - yMin)) * ch;
+    ctx.beginPath(); ctx.arc(lx, ly, 3, 0, Math.PI * 2); ctx.fillStyle = lc; ctx.globalAlpha = .2; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(lx, ly, 2, 0, Math.PI * 2); ctx.fillStyle = lc; ctx.fill();
+  }
+}
+
+function drawBarChart(id, labels, values) {
+  const canvas = document.getElementById(id); if (!canvas) return;
+  const { ctx, w, h } = prepCanvas(canvas);
+  if (!values || !values.length) return;
+  const P = { t: 10, r: 10, b: 24, l: 42 }, cw = w - P.l - P.r, ch = h - P.t - P.b;
+  const mx = Math.max(...values) || 1;
+  const lc = css('--ch-line'), fc = css('--ch-fill');
+
+  ctx.strokeStyle = css('--ch-grid'); ctx.lineWidth = 1; ctx.setLineDash([2, 3]);
+  ctx.fillStyle = css('--ch-label'); ctx.font = '10px ' + css('--mono'); ctx.textAlign = 'right';
+  for (let i = 0; i <= 4; i++) {
+    const y = P.t + (ch / 4) * i, v = mx - (mx / 4) * i;
+    ctx.beginPath(); ctx.moveTo(P.l, y); ctx.lineTo(w - P.r, y); ctx.stroke();
+    ctx.fillText(Math.round(v), P.l - 4, y + 3);
+  }
+  ctx.setLineDash([]);
+
+  const bw = Math.max(3, (cw / values.length) * 0.5), gap = cw / values.length;
+  for (let i = 0; i < values.length; i++) {
+    const bh = (values[i] / mx) * ch;
+    const x = P.l + gap * i + (gap - bw) / 2;
+    const y = P.t + ch - bh;
+    const r = Math.min(2, bw / 2);
+    ctx.beginPath();
+    ctx.moveTo(x, P.t + ch);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.lineTo(x + bw - r, y);
+    ctx.quadraticCurveTo(x + bw, y, x + bw, y + r);
+    ctx.lineTo(x + bw, P.t + ch);
+    ctx.closePath();
+    ctx.fillStyle = fc; ctx.fill();
+    ctx.strokeStyle = lc; ctx.lineWidth = 1; ctx.stroke();
+  }
+
+  ctx.fillStyle = css('--ch-label'); ctx.textAlign = 'center'; ctx.font = '9px ' + css('--mono');
+  const ls = Math.max(1, Math.ceil(labels.length / 10));
+  for (let i = 0; i < labels.length; i += ls) ctx.fillText(labels[i], P.l + gap * i + gap / 2, h - 4);
+}
+
+function drawDonutChart(id, labels, values) {
+  const canvas = document.getElementById(id); if (!canvas) return;
+  const { ctx, w, h } = prepCanvas(canvas);
+  const total = values.reduce((a, b) => a + b, 0); if (!total) return;
+  const cx = w * .35, cy = h / 2, r = Math.min(cx, cy) - 12, ir = r * .6;
+  const colors = [css('--ch-line'), css('--ch-green'), css('--ch-amber'), css('--ch-purple'), css('--teal'), css('--red')];
+
+  let sa = -Math.PI / 2;
+  for (let i = 0; i < values.length; i++) {
+    const sl = (values[i] / total) * Math.PI * 2;
+    ctx.beginPath(); ctx.arc(cx, cy, r, sa, sa + sl); ctx.arc(cx, cy, ir, sa + sl, sa, true); ctx.closePath();
+    ctx.fillStyle = colors[i % colors.length]; ctx.fill();
+    sa += sl;
+  }
+  ctx.beginPath(); ctx.arc(cx, cy, ir, 0, Math.PI * 2); ctx.fillStyle = css('--bg-card'); ctx.fill();
+  ctx.fillStyle = css('--text-primary'); ctx.font = '600 16px ' + css('--mono'); ctx.textAlign = 'center'; ctx.fillText(fmtN(total), cx, cy + 2);
+  ctx.font = '10px ' + css('--font'); ctx.fillStyle = css('--text-dim'); ctx.fillText('total', cx, cy + 16);
+
+  const lx = w * .65; let ly = h * .15;
+  ctx.textAlign = 'left'; ctx.font = '12px ' + css('--font');
+  for (let i = 0; i < labels.length; i++) {
+    const y = ly + i * 24;
+    ctx.fillStyle = colors[i % colors.length]; ctx.beginPath(); ctx.roundRect(lx, y, 10, 10, 2); ctx.fill();
+    ctx.fillStyle = css('--text-primary'); ctx.fillText(labels[i], lx + 16, y + 9);
+    ctx.fillStyle = css('--text-dim'); ctx.font = '11px ' + css('--mono'); ctx.fillText(String(values[i]), lx + 16 + ctx.measureText(labels[i]).width + 8, y + 9);
+    ctx.font = '12px ' + css('--font');
+  }
+}
+
+function drawEmptyChart(id, msg) {
+  const canvas = document.getElementById(id); if (!canvas) return;
+  const { ctx, w, h } = prepCanvas(canvas);
+  ctx.fillStyle = css('--text-dim'); ctx.font = '12px ' + css('--font'); ctx.textAlign = 'center'; ctx.fillText(msg, w / 2, h / 2);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════════════════════════════════════ */
+function fmtN(n) { if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M'; if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K'; return String(n); }
+function fmtUp(s) { const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60); if (d > 0) return d + 'd ' + h + 'h'; if (h > 0) return h + 'h ' + m + 'm'; return m + 'm'; }
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(o => { o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }); });
+
+/* ═══════════════════════════════════════════════════════════════════
+   BOOT
+   ═══════════════════════════════════════════════════════════════════ */
+initTheme();
+initSidebarState();
+if (token) showApp();
+</script>
+</body>
+</html>

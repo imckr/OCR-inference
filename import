@@ -1,0 +1,178 @@
+/Users/chandrakrajwal/Documents/inferiaAI/InferiaChat/OCR-inference/.venv/lib/python3.12/site-packages/paddle/utils/cpp_extension/extension_utils.py:712: UserWarning: No ccache found. Please be aware that recompiling all source files may be required. You can download and install ccache from: https://github.com/ccache/ccache/blob/master/doc/INSTALL.md
+  warnings.warn(warning_message)
+/Users/chandrakrajwal/Documents/inferiaAI/InferiaChat/OCR-inference/.venv/lib/python3.12/site-packages/paddle/utils/cpp_extension/extension_utils.py:712: UserWarning: No ccache found. Please be aware that recompiling all source files may be required. You can download and install ccache from: https://github.com/ccache/ccache/blob/master/doc/INSTALL.md
+  warnings.warn(warning_message)
+[1m[35m--- Running analysis [ir_graph_build_pass][0m
+[1m[35m--- Running analysis [ir_graph_build_pass][0m
+I0306 10:32:19.931654 4249038976 executor.cc:184] Old Executor is Running.
+I0306 10:32:19.931654 4249038976 executor.cc:184] Old Executor is Running.
+[1m[35m--- Running analysis [ir_analysis_pass][0m
+[1m[35m--- Running analysis [ir_analysis_pass][0m
+[32m--- Running IR pass [simplify_with_basic_ops_pass][0m
+[32m--- Running IR pass [simplify_with_basic_ops_pass][0m
+[32m--- Running IR pass [layer_norm_fuse_pass][0m
+[32m--- Running IR pass [layer_norm_fuse_pass][0m
+[32m--- Running IR pass [attention_lstm_fuse_pass][0m
+[32m--- Running IR pass [attention_lstm_fuse_pass][0m
+[32m--- Running IR pass [seqconv_eltadd_relu_fuse_pass][0m
+[32m--- Running IR pass [seqconv_eltadd_relu_fuse_pass][0m
+[32m--- Running IR pass [seqpool_cvm_concat_fuse_pass][0m
+[32m--- Running IR pass [seqpool_cvm_concat_fuse_pass][0m
+[32m--- Running IR pass [mul_lstm_fuse_pass][0m
+[32m--- Running IR pass [mul_lstm_fuse_pass][0m
+[32m--- Running IR pass [fc_gru_fuse_pass][0m
+[32m--- Running IR pass [fc_gru_fuse_pass][0m
+[32m--- Running IR pass [mul_gru_fuse_pass][0m
+[32m--- Running IR pass [mul_gru_fuse_pass][0m
+[32m--- Running IR pass [seq_concat_fc_fuse_pass][0m
+[32m--- Running IR pass [seq_concat_fc_fuse_pass][0m
+[32m--- Running IR pass [gpu_cpu_squeeze2_matmul_fuse_pass][0m
+[32m--- Running IR pass [gpu_cpu_squeeze2_matmul_fuse_pass][0m
+[32m--- Running IR pass [gpu_cpu_reshape2_matmul_fuse_pass][0m
+[32m--- Running IR pass [gpu_cpu_reshape2_matmul_fuse_pass][0m
+[32m--- Running IR pass [gpu_cpu_flatten2_matmul_fuse_pass][0m
+[32m--- Running IR pass [gpu_cpu_flatten2_matmul_fuse_pass][0m
+[32m--- Running IR pass [matmul_v2_scale_fuse_pass][0m
+[32m--- Running IR pass [matmul_v2_scale_fuse_pass][0m
+[32m--- Running IR pass [gpu_cpu_map_matmul_v2_to_mul_pass][0m
+[32m--- Running IR pass [gpu_cpu_map_matmul_v2_to_mul_pass][0m
+I0306 10:32:20.095940 4249038976 fuse_pass_base.cc:55] ---  detected 120 subgraphs
+I0306 10:32:20.095940 4249038976 fuse_pass_base.cc:55] ---  detected 120 subgraphs
+[32m--- Running IR pass [gpu_cpu_map_matmul_v2_to_matmul_pass][0m
+[32m--- Running IR pass [gpu_cpu_map_matmul_v2_to_matmul_pass][0m
+W0306 10:32:20.100471 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100471 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100492 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100492 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100507 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100507 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100746 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100746 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100764 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100764 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100780 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100780 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100934 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100934 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100951 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100951 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100970 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.100970 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101102 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101102 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101120 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101120 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101135 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101135 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101259 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101259 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101279 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101279 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101296 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101296 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101428 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101428 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101445 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101445 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101464 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101464 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101593 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101593 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101610 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101610 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101629 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+W0306 10:32:20.101629 4249038976 gpu_cpu_map_matmul_to_mul_pass.cc:423] matmul op not support broadcast, please check inputs'shape. 
+I0306 10:32:20.102362 4249038976 fuse_pass_base.cc:55] ---  detected 26 subgraphs
+I0306 10:32:20.102362 4249038976 fuse_pass_base.cc:55] ---  detected 26 subgraphs
+[32m--- Running IR pass [matmul_scale_fuse_pass][0m
+[32m--- Running IR pass [matmul_scale_fuse_pass][0m
+I0306 10:32:20.108014 4249038976 fuse_pass_base.cc:55] ---  detected 13 subgraphs
+I0306 10:32:20.108014 4249038976 fuse_pass_base.cc:55] ---  detected 13 subgraphs
+[32m--- Running IR pass [gpu_cpu_map_matmul_to_mul_pass][0m
+[32m--- Running IR pass [gpu_cpu_map_matmul_to_mul_pass][0m
+[32m--- Running IR pass [fc_fuse_pass][0m
+[32m--- Running IR pass [fc_fuse_pass][0m
+I0306 10:32:20.217597 4249038976 fuse_pass_base.cc:55] ---  detected 120 subgraphs
+I0306 10:32:20.217597 4249038976 fuse_pass_base.cc:55] ---  detected 120 subgraphs
+[32m--- Running IR pass [repeated_fc_relu_fuse_pass][0m
+[32m--- Running IR pass [repeated_fc_relu_fuse_pass][0m
+[32m--- Running IR pass [squared_mat_sub_fuse_pass][0m
+[32m--- Running IR pass [squared_mat_sub_fuse_pass][0m
+[32m--- Running IR pass [conv_bn_fuse_pass][0m
+[32m--- Running IR pass [conv_bn_fuse_pass][0m
+I0306 10:32:20.321096 4249038976 fuse_pass_base.cc:55] ---  detected 71 subgraphs
+I0306 10:32:20.321096 4249038976 fuse_pass_base.cc:55] ---  detected 71 subgraphs
+[32m--- Running IR pass [conv_eltwiseadd_bn_fuse_pass][0m
+[32m--- Running IR pass [conv_eltwiseadd_bn_fuse_pass][0m
+[32m--- Running IR pass [conv_transpose_bn_fuse_pass][0m
+[32m--- Running IR pass [conv_transpose_bn_fuse_pass][0m
+[32m[32m--- Running IR pass [conv_transpose_eltwiseadd_bn_fuse_pass][0m
+--- Running IR pass [conv_transpose_eltwiseadd_bn_fuse_pass][0m
+[32m--- Running IR pass [is_test_pass][0m
+[32m--- Running IR pass [is_test_pass][0m
+[32m--- Running IR pass [constant_folding_pass][0m
+[32m--- Running IR pass [constant_folding_pass][0m
+I0306 10:32:20.644557 4249038976 fuse_pass_base.cc:55] ---  detected 366 subgraphs
+I0306 10:32:20.644557 4249038976 fuse_pass_base.cc:55] ---  detected 366 subgraphs
+[1m[35m--- Running analysis [ir_params_sync_among_devices_pass][0m
+[1m[35m--- Running analysis [ir_params_sync_among_devices_pass][0m
+[1m[35m--- Running analysis [adjust_cudnn_workspace_size_pass][0m
+[1m[35m--- Running analysis [inference_op_replace_pass][0m
+[1m[35m--- Running analysis [adjust_cudnn_workspace_size_pass][0m
+[1m[35m--- Running analysis [inference_op_replace_pass][0m
+[1m[35m--- Running analysis [save_optimized_model_pass][0m
+[1m[35m--- Running analysis [memory_optimize_pass][0m
+[1m[35m--- Running analysis [save_optimized_model_pass][0m
+[1m[35m--- Running analysis [memory_optimize_pass][0m
+I0306 10:32:20.647483 4249038976 memory_optimize_pass.cc:114] The persistable params in main graph are : 106.417MB
+I0306 10:32:20.647483 4249038976 memory_optimize_pass.cc:114] The persistable params in main graph are : 106.417MB
+I0306 10:32:20.667047 4249038976 memory_optimize_pass.cc:250] Cluster name : reshape2_98.tmp_0  size: 8
+I0306 10:32:20.667057 4249038976 memory_optimize_pass.cc:250] Cluster name : sum_6.tmp_0  size: 8
+I0306 10:32:20.667058 4249038976 memory_optimize_pass.cc:250] Cluster name : scale_factor  size: 8
+I0306 10:32:20.667047 4249038976 memory_optimize_pass.cc:250] Cluster name : reshape2_98.tmp_0  size: 8
+I0306 10:32:20.667057 4249038976 memory_optimize_pass.cc:250] Cluster name : sum_6.tmp_0  size: 8
+I0306 10:32:20.667058 4249038976 memory_optimize_pass.cc:250] Cluster name : scale_factor  size: 8
+I0306 10:32:20.667060 4249038976 memory_optimize_pass.cc:250] Cluster name : im_shape  size: 8
+I0306 10:32:20.667065 4249038976 memory_optimize_pass.cc:250] Cluster name : tmp_151  size: 2400
+I0306 10:32:20.667068 4249038976 memory_optimize_pass.cc:250] Cluster name : sigmoid_15.tmp_0  size: 4800
+I0306 10:32:20.667068 4249038976 memory_optimize_pass.cc:250] Cluster name : relu_25.tmp_0  size: 1920000
+I0306 10:32:20.667069 4249038976 memory_optimize_pass.cc:250] Cluster name : image  size: 7680000
+I0306 10:32:20.667070 4249038976 memory_optimize_pass.cc:250] Cluster name : relu_6.tmp_0  size: 7680000
+I0306 10:32:20.667073 4249038976 memory_optimize_pass.cc:250] Cluster name : relu_8.tmp_0  size: 7680000
+I0306 10:32:20.667073 4249038976 memory_optimize_pass.cc:250] Cluster name : batch_norm_19.tmp_2  size: 3840000
+I0306 10:32:20.667074 4249038976 memory_optimize_pass.cc:250] Cluster name : elementwise_add_2  size: 13440000
+I0306 10:32:20.667075 4249038976 memory_optimize_pass.cc:250] Cluster name : relu_7.tmp_0  size: 7680000
+I0306 10:32:20.667078 4249038976 memory_optimize_pass.cc:250] Cluster name : clip_19.tmp_0_slice_7  size: 2416
+I0306 10:32:20.667078 4249038976 memory_optimize_pass.cc:250] Cluster name : concat_21.tmp_0  size: 23348224
+I0306 10:32:20.667060 4249038976 memory_optimize_pass.cc:250] Cluster name : im_shape  size: 8
+I0306 10:32:20.667065 4249038976 memory_optimize_pass.cc:250] Cluster name : tmp_151  size: 2400
+I0306 10:32:20.667068 4249038976 memory_optimize_pass.cc:250] Cluster name : sigmoid_15.tmp_0  size: 4800
+I0306 10:32:20.667068 4249038976 memory_optimize_pass.cc:250] Cluster name : relu_25.tmp_0  size: 1920000
+I0306 10:32:20.667069 4249038976 memory_optimize_pass.cc:250] Cluster name : image  size: 7680000
+I0306 10:32:20.667070 4249038976 memory_optimize_pass.cc:250] Cluster name : relu_6.tmp_0  size: 7680000
+I0306 10:32:20.667073 4249038976 memory_optimize_pass.cc:250] Cluster name : relu_8.tmp_0  size: 7680000
+I0306 10:32:20.667073 4249038976 memory_optimize_pass.cc:250] Cluster name : batch_norm_19.tmp_2  size: 3840000
+I0306 10:32:20.667074 4249038976 memory_optimize_pass.cc:250] Cluster name : elementwise_add_2  size: 13440000
+I0306 10:32:20.667075 4249038976 memory_optimize_pass.cc:250] Cluster name : relu_7.tmp_0  size: 7680000
+I0306 10:32:20.667078 4249038976 memory_optimize_pass.cc:250] Cluster name : clip_19.tmp_0_slice_7  size: 2416
+I0306 10:32:20.667078 4249038976 memory_optimize_pass.cc:250] Cluster name : concat_21.tmp_0  size: 23348224
+I0306 10:32:20.667079 4249038976 memory_optimize_pass.cc:250] Cluster name : relu_2.tmp_0  size: 20480000
+I0306 10:32:20.667080 4249038976 memory_optimize_pass.cc:250] Cluster name : relu_0.tmp_0  size: 20480000
+I0306 10:32:20.667081 4249038976 memory_optimize_pass.cc:250] Cluster name : concat_1.tmp_0  size: 53760000
+I0306 10:32:20.667079 4249038976 memory_optimize_pass.cc:250] Cluster name : relu_2.tmp_0  size: 20480000
+I0306 10:32:20.667080 4249038976 memory_optimize_pass.cc:250] Cluster name : relu_0.tmp_0  size: 20480000
+I0306 10:32:20.667081 4249038976 memory_optimize_pass.cc:250] Cluster name : concat_1.tmp_0  size: 53760000
+[1m[35m--- Running analysis [ir_graph_to_program_pass][0m
+[1m[35m--- Running analysis [ir_graph_to_program_pass][0m
+I0306 10:32:20.759568 4249038976 analysis_predictor.cc:2311] ======= ir optimization completed =======
+I0306 10:32:20.759568 4249038976 analysis_predictor.cc:2311] ======= ir optimization completed =======
+I0306 10:32:20.760345 4249038976 naive_executor.cc:211] ---  skip [feed], feed -> scale_factor
+I0306 10:32:20.760352 4249038976 naive_executor.cc:211] ---  skip [feed], feed -> image
+I0306 10:32:20.760353 4249038976 naive_executor.cc:211] ---  skip [feed], feed -> im_shape
+I0306 10:32:20.760345 4249038976 naive_executor.cc:211] ---  skip [feed], feed -> scale_factor
+I0306 10:32:20.760352 4249038976 naive_executor.cc:211] ---  skip [feed], feed -> image
+I0306 10:32:20.760353 4249038976 naive_executor.cc:211] ---  skip [feed], feed -> im_shape
+I0306 10:32:20.764096 4249038976 naive_executor.cc:211] ---  skip [reshape2_126.tmp_0], fetch -> fetch
+I0306 10:32:20.764106 4249038976 naive_executor.cc:211] ---  skip [tile_4.tmp_0], fetch -> fetch
+I0306 10:32:20.764096 4249038976 naive_executor.cc:211] ---  skip [reshape2_126.tmp_0], fetch -> fetch
+I0306 10:32:20.764106 4249038976 naive_executor.cc:211] ---  skip [tile_4.tmp_0], fetch -> fetch
